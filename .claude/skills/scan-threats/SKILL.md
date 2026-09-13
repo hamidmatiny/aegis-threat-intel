@@ -68,11 +68,29 @@ Append the cycle's result (even a clean one, briefly) to `memory/finding-history
 
 ### Step 7: Escalate real findings only
 
-If Step 5 produced at least one real finding, follow CLAUDE.md's **Escalation channels** in order (Trinity report → operator-queue alert if urgent → `aegis-ceo` chat if permitted → Slack `#aegis-threat-intel` if bound), and report honestly which of those actually succeeded. A "nothing relevant" cycle does not need channels 2–4 — at most publish it via the Trinity report so the append-only history shows the cycle ran, or skip publishing entirely and rely on `memory/finding-history.json`.
+If Step 5 produced at least one real finding, follow this order and report honestly which steps succeeded:
+
+1. **Trinity report** — `mcp__trinity__report`, `report_type: aegis_threat_intel.finding`, `display_hint: markdown` (always attempt).
+2. **Direct escalation to `aegis-ceo`** — `mcp__trinity__chat_with_agent` with `name: "aegis-ceo"` and the finding text. Requires live A2A permission `aegis-threat-intel` → `aegis-ceo`.
+   - **Confirmed delivery** = tool success with a real ceo execution/response.
+   - Only then may you say the finding was **escalated to / CEO notified**.
+   - On **any** failure (permission deny, timeout, tool error): say **"flagged, delivery failed"** with the error — never imply CEO was notified.
+3. **Operator-queue fallback (mandatory when step 2 fails)** — append an `alert`-type item to `~/.trinity/operator-queue.json` with a unique `request_id` (e.g. `ti-finding-<date>-<slug>`), short `title`, and the finding in `question`. This is **required** for every real finding whose ceo-chat delivery failed — not optional, not only "if urgent." Channels have failed silently before; do not rely on A2A permission alone.
+4. **Slack** — if `#aegis-threat-intel` is bound, also post via `mcp__trinity__send_group_message` (outbound visibility only).
+
+A "nothing relevant this cycle" result does **not** need steps 2–4 — at most publish via the Trinity report / `memory/finding-history.json`.
+
+## Known failure modes
+
+### FM-1 — Claiming CEO notified without delivery
+
+**What went wrong:** Escalation channel 3 could be listed in docs while live TI→ceo permission was empty, so a model could invent success.
+
+**Correct behavior:** Confirmed `chat_with_agent` only → "CEO notified." On failure → "flagged, delivery failed" **and** mandatory operator-queue alert.
 
 ## Outputs
 
 - A direct threat-scan summary in chat
 - Updated `memory/finding-history.json`
 - A Trinity report (when deployed and there's something worth recording)
-- Escalation via the channels in CLAUDE.md, only for real findings — never for a clean cycle
+- Escalation via channels above — claim CEO notified only after confirmed delivery; on chat failure, operator-queue is mandatory
