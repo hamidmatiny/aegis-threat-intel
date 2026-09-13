@@ -10,7 +10,7 @@
       "plugins_installed": { "done": false, "label": "Install plugins (agent-dev, trinity, utilities)" }
     },
     "trinity": {
-      "onboarded": { "done": false, "label": "Deploy to Trinity (/trinity:onboard) — as a free-pool agent, per aegis-infra's tier assignment" },
+      "onboarded": { "done": true, "label": "Deploy to Trinity (/trinity:onboard) — as a free-pool agent, per aegis-infra's tier assignment" },
       "auth_mode_confirmed": { "done": false, "label": "Confirm with aegis-infra/admin that OmniRoute free-pool routing (gemini-3.7-flash) is actually live for this agent, not just Claude subscription auth by default" },
       "first_remote_run": { "done": false, "label": "Run a skill remotely via mcp__trinity__chat_with_agent" }
     },
