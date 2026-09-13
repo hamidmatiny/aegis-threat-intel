@@ -1,0 +1,59 @@
+title: "AEGIS Threat Intel"
+refresh: 300
+updated: "2026-09-13T00:00:00Z"
+
+sections:
+  - title: "Status"
+    layout: grid
+    columns: 3
+    widgets:
+      - type: status
+        label: "Agent Status"
+        value: "Active"
+        color: green
+      - type: status
+        label: "Feed Source"
+        value: "Unaudited"
+        color: gray
+        description: "Set by /audit-feed-source — updated to green/yellow/red once checked"
+      - type: metric
+        label: "Own Tier"
+        value: "free-pool"
+        description: "Per aegis-infra's assignment (OmniRoute, gemini-3.7-flash)"
+
+  - title: "Threat Watch"
+    layout: grid
+    columns: 3
+    widgets:
+      - type: metric
+        label: "Last Scan"
+        value: "—"
+        description: "Updated by /scan-threats"
+      - type: metric
+        label: "Open Findings"
+        value: "0"
+        description: "From memory/finding-history.json"
+      - type: metric
+        label: "Stack Profile Components"
+        value: "—"
+        description: "From memory/stack-profile.md"
+
+  - title: "Recent Findings"
+    layout: list
+    widgets:
+      - type: list
+        title: "Recent Scan Results"
+        items: []
+        max_items: 5
+
+  - title: "Quick Links"
+    layout: list
+    widgets:
+      - type: link
+        label: "NVD (CVE database)"
+        url: "https://nvd.nist.gov"
+        external: true
+      - type: link
+        label: "Trinity Dashboard"
+        url: "https://ability.ai"
+        external: true

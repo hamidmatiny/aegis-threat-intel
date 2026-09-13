@@ -1,0 +1,22 @@
+{
+  "phase": "local",
+  "started": "2026-09-13",
+  "steps": {
+    "local": {
+      "env_configured": { "done": false, "label": "Configure environment variables (.env) — NVD_API_KEY is optional, raises the NVD rate limit" },
+      "first_skill_run": { "done": false, "label": "Run /audit-feed-source to confirm a real CVE/security-news source is actually reachable" },
+      "stack_profile_seeded": { "done": false, "label": "Run /update-stack-profile at least once to confirm the watch-list definition" },
+      "first_trial_run": { "done": false, "label": "Run /scan-threats once and have Hamid review the real trial output before any cadence is enabled" },
+      "plugins_installed": { "done": false, "label": "Install plugins (agent-dev, trinity, utilities)" }
+    },
+    "trinity": {
+      "onboarded": { "done": false, "label": "Deploy to Trinity (/trinity:onboard) — as a free-pool agent, per aegis-infra's tier assignment" },
+      "auth_mode_confirmed": { "done": false, "label": "Confirm with aegis-infra/admin that OmniRoute free-pool routing (gemini-3.7-flash) is actually live for this agent, not just Claude subscription auth by default" },
+      "first_remote_run": { "done": false, "label": "Run a skill remotely via mcp__trinity__chat_with_agent" }
+    },
+    "schedules": {
+      "schedules_configured": { "done": false, "label": "Enable /scan-threats on a cadence — only after the local trial run (first_trial_run) has been reviewed and approved" },
+      "first_scheduled_run": { "done": false, "label": "Verify first scheduled execution completed" }
+    }
+  }
+}

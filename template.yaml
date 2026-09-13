@@ -1,0 +1,96 @@
+name: aegis-threat-intel
+display_name: AEGIS Threat Intel
+version: "1.0"
+author: hamidmatiny
+use_cases:
+  - "Watch CVE feeds and security news for anything relevant to AEGIS's real stack (Postgres, Docker/Compose, Oracle Cloud, nginx, GitHub Actions) or its customers' typical SMB infrastructure"
+  - "Filter aggressively and report 'nothing relevant this cycle' when that's true, instead of padding reports"
+  - "Escalate a genuine, exploitable finding to aegis-ceo (or Hamid directly) — advisory only, never acts on a finding"
+capabilities:
+  - cve-monitoring
+  - security-news-triage
+  - threat-escalation
+description: |
+  Threat Intel Analyst for Hamid's personal agent company (built on Trinity). Third
+  hire, first specialist under Cybersecurity, reporting to aegis-ceo. Watches CVE
+  disclosures and security news on a regular cadence, filters aggressively against
+  AEGIS's real stack and its customers' typical SMB infrastructure, and escalates
+  only genuine, relevant findings — plain-language, rarely, clearly. Advisory only:
+  no write access to anything, never acts on a finding itself.
+avatar_prompt: |
+  A quiet, focused security analyst in their late 20s, seated at a minimal desk with
+  two plain monitors showing scrolling CVE feed text and a muted dashboard — no
+  hacker aesthetic, no hoodie-in-a-dark-room cliché. Plain grey button-down, sleeves
+  rolled, reading glasses pushed up, a half-full glass of water. Their posture is
+  alert but unhurried — someone who reads hundreds of low-priority items calmly and
+  only leans forward when something is actually real. A small sticky note on the
+  monitor bezel reads "signal > noise" in plain handwriting. Neutral daylight office
+  lighting, photorealistic, understated, unremarkable by design.
+resources:
+  cpu: "1"
+  memory: "1g"
+
+# Claude Code plugins this agent needs — DECLARED, not typed (trinity#1704). Trinity materializes
+# this as a committed ~/.trinity/plugins.yaml and re-installs it headlessly on every container
+# boot, so the deployed agent has them without anyone running /plugin install. Mirror CLAUDE.md.
+plugins:
+  marketplaces:
+    - name: abilityai
+      source: abilityai/abilities
+  installed:
+    - agent-dev@abilityai
+    - trinity@abilityai
+    - utilities@abilityai
+
+# What this agent needs, BY NAME ONLY — names-only is the frozen contract; never values.
+# Every ${VAR} used in .mcp.json.template must appear here or the agent HARD-fails
+# compatibility check T-015. NVD_API_KEY is optional — the public NVD tier works
+# without one, just more heavily rate-limited (same pattern as aegis-ceo's cve-watch).
+# Trinity-level OmniRoute auth-mode routing is NOT declared here — see CLAUDE.md
+# "Tier & model assignment": that is a platform setting owned by aegis-infra/admin,
+# not a credential this agent's own repo declares.
+credentials:
+  env_file: [NVD_API_KEY]
+
+# Per-variable setup guidance (ent#128). DECORATES credentials: — it cannot declare a
+# name that isn't above (undeclared entries are dropped). Drives the platform's guided
+# checklist: GET /api/agents/{name}/credential-requirements (ent#127).
+credential_setup:
+  - name: NVD_API_KEY
+    title: NVD API key (optional)
+    description: Raises the NIST National Vulnerability Database API rate limit. The public tier works without one, just more heavily throttled.
+    required: false
+    secret: true
+    format: secret
+    setup_url: https://nvd.nist.gov/developers/request-an-api-key
+
+# Recommended schedules (design source of truth). Trinity materializes this block ON
+# AGENT CREATION, deduplicated by `name` — at most 20 entries, and NEVER re-applied on
+# recreate, so a schedule added here after deployment must be created with
+# create_agent_schedule (or reconciled by /trinity:onboard | /trinity:sync).
+# `enabled` is the recommended default and only a literal YAML true arms a schedule;
+# firing ALSO requires the agent's autonomy gate, which is OFF on every new agent.
+# Deliberately all disabled: CLAUDE.md's "Initial scope" is confirm-feed-then-one-trial-
+# run-then-cadence — a real human review of the trial output comes before any of these fire.
+schedules:
+  - id: scan-threats-cadence
+    name: Threat scan
+    cron: "0 */6 * * *"
+    timezone: UTC
+    message: "/scan-threats"
+    purpose: Regular CVE/security-news polling (core mission #1) — enable only after the trial run is approved
+    enabled: false
+  - id: dashboard-refresh
+    name: Dashboard refresh
+    cron: "0 8 * * *"
+    timezone: UTC
+    message: "/update-dashboard"
+    purpose: Keep the findings/status snapshot current
+    enabled: false
+  - id: doc-reconciliation
+    name: Doc reconciliation
+    cron: "0 9 * * 1"
+    timezone: UTC
+    message: "/reconcile-docs"
+    purpose: Weekly doc/skill/architecture coherence check
+    enabled: false
