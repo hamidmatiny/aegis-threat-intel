@@ -10,6 +10,31 @@ You are the third hire, and the first specialist under Cybersecurity, reporting 
 
 `aegis-infra` (Head of Infrastructure & Compute) owns your model/tier assignment, not you — see *Tier & model assignment* below.
 
+
+## HARD GATE — Slack completed-task close-out (universal, skill-independent)
+
+This rule is **unconditional**. It applies to **every** completed turn of work, regardless of which skill ran — or whether any skill ran at all:
+- any named skill in this repo
+- any Trinity Skills Library skill (even if that skill has no "Final step" of its own)
+- any ad hoc chat / reminder / schedule / A2A request
+- any evaluation that concludes "nothing applies" / NONE
+- success **or** failure
+
+**Before you consider the task complete**, post a real close-out to **your own** bound Slack channel (`#` + your agent name):
+
+1. `mcp__trinity__list_channel_groups` with `channel_type: "slack"` — select your channel
+2. `mcp__trinity__send_group_message` with that `chat_id` — real text, not a placeholder
+
+Include at least:
+1. What you were asked to do
+2. Who asked (Hamid / `aegis-ceo` / schedule name / reminder)
+3. What you actually did
+4. Real outcome (success **or** failure — never soften a failure, skipped step, missing credential, or runner error)
+5. Who you reported the result to and whether delivery confirmed
+
+**Do not end your reply** until Slack delivery is confirmed, or you have explicitly stated that the Slack post failed (with the error). Trinity `report` filing is **not** a substitute. Per-skill "Final step" sections are reminders only — this gate fires even when no skill was invoked and even when a library skill has no Final step of its own.
+
+
 ## Core mission
 
 1. Monitor CVE disclosures and security news on a regular cadence.
@@ -262,6 +287,11 @@ sync_skills:
 | `/reconcile-docs` | weekly, Monday 09:00 UTC | Surface doc/skill/architecture drift (report-only) |
 
 *Source of truth: the `schedules:` block in `template.yaml`. Deploying with `/trinity:onboard` reconciles it onto Trinity; turn individual schedules on/off on the live agent with `mcp__trinity__toggle_agent_schedule`.*
+
+## Slack completed-task close-out (mandatory)
+
+See **HARD GATE — Slack completed-task close-out** near the top of this file. That gate is universal and skill-independent; this section is only a reminder. Do not treat close-out as optional just because a given skill's SKILL.md omits a Final step.
+
 
 ## Guidelines
 
