@@ -353,3 +353,11 @@ Start with:
 1. `/audit-feed-source` — confirm what real CVE/security-news source is actually available to poll; ask Hamid if none is obviously wired rather than assuming one exists.
 2. Produce one real trial finding-or-"nothing relevant" report via `/scan-threats` — a genuine run against whatever source Step 1 confirmed, not a placeholder.
 3. Only after Hamid has seen that real trial output, move to a regular cadence (see Recommended Schedules) — and only if the free-pool tier dependency (OmniRoute routing confirmed live) is also satisfied.
+
+## Platform Skills
+
+This agent has the following skills installed in `~/.claude/skills/`:
+
+- `/self-diagnostic` - Use with /self-diagnostic command
+
+Use these skills by invoking their slash commands (e.g., `/self-diagnostic`).
